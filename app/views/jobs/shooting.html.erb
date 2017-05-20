@@ -1,0 +1,39 @@
+<%  require 'mechanize'
+mechanize = Mechanize.new
+page = mechanize.get('http://www.whatsfilming.ca/inproduction')%>
+<% table_length = page.css('tr').length - 1%>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+    <h1 class="page-header">What's Shooting</h1>
+    <p>There are <%= table_length %> movies and TV shows currently filming in British Columbia.</p>
+
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Filming Dates</th>
+          <th>Sign Code</th>
+          <th>Notable Cast</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% table_length.times do |tr| %>
+        <tr>
+          <% row = page.css('tr')[tr] %>
+          <% 5.times do |x| %>
+          <% item = row.css('td')[x] %>
+          <% if item == nil %>
+            <td></td>
+          <% else %>
+            <td><%= item.text %></td>
+          <% end %>
+        <% end %>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

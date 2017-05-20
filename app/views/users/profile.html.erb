@@ -1,0 +1,81 @@
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+
+<% else %>
+
+  <div class="panel panel-default">
+
+    <div class="panel-body">
+      <h1><%= @user.full_name %></h1>
+      <hr>
+      <%= image_tag @user.image.url(:thumb) if @user.image.present? %>
+      <p><strong>About Me:</strong> <%= @user.bio %></p>
+      <p><strong>My Experience:</strong> <%= @user.experience %></p>
+      <h5>Reach Me At: <%= @user.phone %><%= @user.email %></h5>
+      <hr>
+
+      <%= link_to "Chat", direct_message_path(@user.id), data: {behavior: "chatroom-link", chatroom_id: Chatroom.direct_message_for_users([current_user, @user]).id }, type:"button", class:"btn-sm btn-info" %>
+
+      <% friendship =
+        current_user.friendships.where(friend_id: @user).limit(1).first %>
+      <% received_friendship =
+      current_user.received_friendships.where(user_id: @user).limit(1).first %>
+
+      <% if friendship %>
+        <% if friendship.accepted %>
+          <%= link_to "Unfriend",
+          friendship_path(id: friendship.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+        <% else %>
+          <%= link_to "Cancel Friend Request",
+          friendship_path(id: friendship.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+        <% end %>
+
+      <% elsif received_friendship %>
+        <% if received_friendship.accepted %>
+          <%= link_to "Unfriend",
+          friendship_path(id: received_friendship.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+        <% else %>
+          <%= link_to "Accept Friend Request",
+          friendship_path(id: received_friendship.id), method: "put", type:"button", class:"btn-sm btn-info" %>
+          |
+          <%= link_to "Reject Friend Request",
+          friendship_path(id: received_friendship.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+        <% end %>
+
+      <% elsif @user != current_user %>
+        <%= link_to "Add Friend", friendships_path(friend_id: @user), method: :post, type:"button", class:"btn-sm btn-info" %>
+      <% end %>
+
+
+      <% if current_user.is_admin && @user.is_admin == false %>
+          <%= link_to 'Make Admin', admin_dashboard_index_path(:user_id => @user.id), method: :post, type:"button", class:"btn-sm btn-info" %>
+        <% elsif current_user.is_admin && @user.is_admin == true %>
+          <%= link_to 'Undo Admin', admin_dashboard_path(:id => @user.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+      <% end %>
+
+      <% if current_user == @user %>
+        <%= link_to 'Edit Profile', edit_user_path(:id => @user.id), type:"button", class:"btn-sm btn-info" %>
+      <% end %>
+
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+
+      <% if @jobs %>
+      <h3>Jobs Posted: </h3>
+      <hr>
+        <% @jobs.each do |j| %>
+          <h4 ><%= link_to j.title, j %></h4>
+          <h5 ><%= j.description %></h5>
+          <h5 >Status: <%= j.aasm_state %></h5>
+          <br>
+          <hr>
+        <% end %>
+      <% end %>
+
+    </div>
+  </div>
+
+<% end %>

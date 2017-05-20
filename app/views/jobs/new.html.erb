@@ -1,0 +1,7 @@
+<h1>New Job Post</h1>
+
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+<% else %>
+  <%= render 'form' %>
+<% end %>

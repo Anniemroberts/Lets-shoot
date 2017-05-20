@@ -1,0 +1,26 @@
+
+
+<div class="panel panel-default container">
+  <div class="panel-body row">
+
+    <h2><%= link_to @other_user.full_name, user_profile_path(@other_user.id) %></h2>
+    <hr>
+
+
+      <div data-behavior='messages' data-chatroom-id='<%= @chatroom.id %>' class='messages'>
+        <% @chatroom.messages.each do |message| %>
+
+          <%= render message %>
+        <% end %>
+      </div>
+      <hr>
+      <div>
+      <%= form_for [@chatroom, Message.new] do |f| %>
+        <%= f.text_area :body, rows: 1, class: "form-control", autofocus: true %>
+      <% end %>
+      </div>
+    </div>
+
+
+  </div>
+</div>

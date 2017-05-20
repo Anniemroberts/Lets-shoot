@@ -1,0 +1,20 @@
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+<% else %>
+    <div class="panel panel-default">
+      <div class="panel-body">
+      <h1>Jobs Applied For</h1>
+      <hr>
+      <% @applications.each do |a| %>
+      <% job = a.job %>
+      <h3 ><%= link_to job.title, job %></h3>
+      <h4 >Description: <%= job.description %></h4>
+      <h4 >Poster: <%= link_to User.find(job.user_id).full_name, user_profile_path(job.user_id) %></h4>
+      <h4 >Job Status: <%= job.aasm_state %></h4>
+      <hr>
+      <h4 >Your Application: <%= a.body %></h4>
+      <h4 >Application Status: <%= a.aasm_state %></h4>
+      <% end %>
+      </div>
+    </div>
+  <% end %>

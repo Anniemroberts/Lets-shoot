@@ -1,0 +1,40 @@
+<div class="panel panel-default container">
+  <div class="panel-body row">
+
+    <h2>Chatroom: <%= @chatroom.name %> </h2>
+    <hr>
+
+    <div class="col-sm-4" style="float:right; width: 400px">
+      <h4><%= link_to "Public Chatrooms", chatrooms_path %></h4>
+      <hr>
+      <table class="table">
+        <% @chatrooms.each do |chatroom| %>
+          <tr>
+            <td><%= chatroom.name %></td>
+            <td><%= link_to 'View', chatroom, type:"button", class:"btn-sm btn-info" %></td>
+            <td><%= link_to "Join", chatroom_chatroom_users_path(chatroom), method: :post, type:"button", class:"btn-sm btn-info" %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+
+    <div class="col-sm-4"style="float: left;
+    clear: left;" >
+
+      <div data-behavior='messages' data-chatroom-id='<%= @chatroom.id %>' class='messages'>
+        <% @chatroom.messages.each do |message| %>
+
+          <%= render message %>
+        <% end %>
+      </div>
+      <hr>
+      <div>
+      <%= form_for [@chatroom, Message.new] do |f| %>
+        <%= f.text_area :body, rows: 1, class: "form-control", autofocus: true %>
+      <% end %>
+      </div>
+    </div>
+
+
+  </div>
+</div>

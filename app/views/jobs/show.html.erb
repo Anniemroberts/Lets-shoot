@@ -1,0 +1,74 @@
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+<% else %>
+<div class="panel panel-default">
+  <div class="panel-body">
+
+<h1><%= @job.title %></h1>
+<hr>
+<h4><small><%= @job.description %></small></h4>
+<h4><small>Crew call: <%= @job.when.in_time_zone("Pacific Time (US & Canada)").to_formatted_s(:long_ordinal) %></small></h4>
+<h4><small>Poster: <%= link_to @job.user.full_name, user_profile_path(@job.user) %></small></h4>
+<h4><small>Status: <%= @job.aasm_state %></small></h4>
+<h6><small>Posted At: <%= @job.updated_at.in_time_zone("Pacific Time (US & Canada)").to_formatted_s(:long_ordinal) %></small></h6>
+<hr>
+
+
+<% if @job.address %>
+  <div style='width: 800px;'>
+   <div id="map" style='width: 800px; height: 400px;'></div>
+  </div>
+
+  <script>
+   handler = Gmaps.build('Google');
+   handler.buildMap({ provider: {}, internal: {id: 'map'}}, function(){
+   markers = handler.addMarkers([
+     {
+       "lat": <%= @job.latitude %>,
+       "lng": <%= @job.longitude %>,
+       "infowindow": "<%= @job.title %>"
+     }
+   ]);
+   handler.bounds.extendWith(markers);
+   handler.fitMapToBounds();
+   handler.getMap().setZoom(18);
+   });
+  </script>
+<% end %>
+<br>
+<% if can?(:manage, @job) %>
+  <div>
+    <%= link_to 'Delete', job_path(@job),
+                          method: :delete,
+                          data: { confirm: 'Are you sure?' },
+                          type:"button",
+                          class:"btn-sm btn-danger" %>
+    <%= link_to 'Edit', edit_job_path(@job), type:"button", class:"btn-sm btn-info" %>
+  </div>
+
+  <hr>
+  <h2>Applications</h2>
+  <% @job.applications.each do |app| %>
+    <%= app.body %>
+    <h5>Applicant: <%= link_to app.user.full_name, user_profile_path(app.user) %></h5>
+    <h6>Posted At: <%= @job.updated_at.in_time_zone("Pacific Time (US & Canada)").to_formatted_s(:long_ordinal) %></h6>
+    <%= link_to 'Delete', application_path(app) ,
+                          method: :delete,
+                          data: { confirm: 'Are you sure? '},
+                          type:"button",
+                          class:"btn-sm btn-danger" %>
+    <%= link_to 'Hire', hire_path(app) , type:"button", class:"btn-sm btn-info" %>
+    <hr>
+  <% end %>
+
+<% elsif @job.aasm_state != 'filled' %>
+<hr>
+  <h3>Apply</h3>
+  <%= simple_form_for [@job, @application] do |f| %>
+  <%= f.input :body, label: false, hint: 'at least 5 characters' %>
+  <%= f.submit class: 'btn btn-primary' %>
+  <% end %>
+<% end %>
+</div>
+</div>
+<% end %>

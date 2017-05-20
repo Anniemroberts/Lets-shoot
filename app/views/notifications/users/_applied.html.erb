@@ -1,0 +1,8 @@
+<%= link_to user_profile_path(notification.actor.id),
+    class: "dropdown-item #{"unread" if !notification.read_at?}", style: "color:#000000" do %>
+
+  <%= notification.actor.full_name %>
+  has applied for your job
+  <div class="dropdown-divider"></div>
+
+<% end %>

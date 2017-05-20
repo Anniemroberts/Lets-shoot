@@ -1,0 +1,88 @@
+<link href="/assets/network.scss" media="screen" rel="stylesheet" />
+
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+
+  <%= render :partial => 'layouts/unauthorized' %>
+
+<% else %>
+
+<div class="container">
+<div class="row">
+
+<div class="fluid-container sidechat" >
+  <div class="col-sm-4" >
+    <div class="panel panel-default">
+      <div class="panel-body">
+      <h4><%= link_to "Public Chatrooms", chatrooms_path %></h4>
+      <hr>
+      <table class="table">
+        <% @chatrooms.each do |chatroom| %>
+          <tr>
+            <td><%= chatroom.name %></td>
+            <td><%= link_to 'View', chatroom, type:"button", class:"btn-sm btn-info" %></td>
+            <td><%= link_to "Join", chatroom_chatroom_users_path(chatroom), method: :post, type:"button", class:"btn-sm btn-info" %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+    </div>
+
+      <% if @friends %>
+      <div class="panel panel-default">
+      <div class="panel-body">
+      <h4>Messages</h4>
+      <hr>
+      <ul>
+        <% @friends.each do |user| %>
+          <li><%= link_to user.full_name, direct_message_path(user.id), data: {behavior: "chatroom-link", chatroom_id: Chatroom.direct_message_for_users([current_user, user]).id } %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+  </div>
+</div>
+</div>
+
+<div class="col-sm-8">
+<% if current_user.requested_friendships %>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <h4>Friend Requests</h4>
+    <hr>
+    <ul>
+      <% current_user.requested_friendships.each do |request| %>
+        <li>
+          <% friendship = Friendship.find_by(user_id: request.id, friend_id: current_user.id) %>
+          <%= link_to request.full_name, user_profile_path(request.id) %>
+          <%= link_to "Accept",  friendship_path(id: friendship.id), method: "put", type:"button", class:"btn-sm btn-info" %>
+          <%= link_to "Decline", friendship_path(id: friendship.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+<% end %>
+
+<% if current_user.friends %>
+  <div class="panel panel-default">
+    <div class="panel-body">
+    <h4>My Friends</h4>
+    <hr>
+    <ul>
+      <% @friends.each do |f| %>
+      <li>
+          <%= link_to f.full_name, user_profile_path(f.id) %>
+      </li>
+      <% end %>
+    </ul>
+  </div>
+  </div>
+<% end %>
+</div>
+
+
+
+</div>
+</div>
+
+<% end %>

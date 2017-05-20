@@ -1,0 +1,44 @@
+<%if user_signed_in? == false || current_user.is_admin  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+
+<% elsif current_user.is_admin %>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+  <h1>Unauthorized Users</h1>
+  <hr>
+
+    <% if @pending_users.length != 0 %>
+      <% @pending_users.each do |u| %>
+        <%= link_to u.full_name, user_profile_path(u) %>
+        <%= link_to 'Authorize', auth_path(:user_id => u.id), method: :patch, type:"button", class:"btn-sm btn-info" %>
+        <hr>
+      <% end %>
+    <% end %>
+
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+<h1>Authorized Users</h1>
+<hr>
+
+  <% @accepted_users.each do |u| %>
+    <%= link_to u.full_name, user_profile_path(u) %>
+    <% if u.is_admin == false %>
+      <%= link_to 'Make Admin', admin_dashboard_index_path(:user_id => u.id), method: :post, type:"button", class:"btn-sm btn-info" %>
+    <% elsif u.is_admin == true %>
+      <%= link_to 'Undo Admin', admin_dashboard_path(:id => u.id), method: :delete, type:"button", class:"btn-sm btn-danger" %>
+    <% end %>
+    <hr>
+  <% end %>
+
+  </div>
+</div>
+
+
+<% end %>

@@ -1,0 +1,45 @@
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+
+  <%= render :partial => 'layouts/unauthorized' %>
+
+<% elsif @jobs.length != 0 %>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+    <h1>All Jobs</h1>
+    <hr>
+
+    <table class="table table-striped table-bordered">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>When</th>
+          <th>Show</th>
+          <th>Poster</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% @jobs.each do |j| %>
+          <tr>
+            <td><%= link_to j.title, job_path(j) %></td>
+            <td><%= j.description %></td>
+            <td><%= j.when.in_time_zone("Pacific Time (US & Canada)").to_formatted_s(:long_ordinal) %></td>
+            <td><%= j.show %></td>
+            <% if j.user_id %>
+              <td><%= link_to User.find(j.user_id).full_name, user_profile_path(j.user_id) %></td>
+              <% else %>
+              <td></td>
+            <% end %>
+            <td><%= j.aasm_state %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% end %>

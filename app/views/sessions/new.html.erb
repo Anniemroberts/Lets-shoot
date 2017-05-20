@@ -1,0 +1,21 @@
+<div class="panel panel-default">
+  <div class="panel-body">
+
+    <h2>Log in</h2>
+    <hr>
+
+    <%= form_tag user_session_path do %>
+      <div>
+        <%= label_tag :email %>
+        <%= email_field_tag :email %>
+      </div>
+      <div>
+        <%= label_tag :password %>
+        <%= password_field_tag :password %>
+      </div>
+      <%= submit_tag 'Sign In' %>
+    <% end %>
+
+    <%= link_to "Sign in with Facebook", "/auth/facebook", id: "sign_in" %>
+  </div>
+</div>

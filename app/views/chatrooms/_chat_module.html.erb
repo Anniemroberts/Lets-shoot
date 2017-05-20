@@ -1,0 +1,32 @@
+<div class="fluid-container sidechat" >
+  <div class="col-sm-6" >
+    <!-- style="position: fixed; top: 70px; left: 0;" -->
+    <% if user_signed_in? %>
+    <% if current_user.requested_friendships %>
+    <div class="panel panel-default">
+      <div class="panel-body">
+      <h5>Public Chatrooms</h5>
+      <ul>
+        <% current_user.chatrooms.public_channels.each do |chatroom| %>
+          <%= link_to chatroom.name, chatroom, data: {behavior: "chatroom-link", chatroom_id: chatroom.id} %>
+        <% end %>
+      </ul>
+    </div>
+    </div>
+    <%end%>
+
+      <% if @friends %>
+      <div class="panel panel-default">
+      <div class="panel-body">
+      <h5>Messages</h5>
+      <ul>
+        <% @friends.each do |user| %>
+          <li><%= link_to user.full_name, direct_message_path(user.id), data: {behavior: "chatroom-link", chatroom_id: Chatroom.direct_message_for_users([current_user, user]).id } %></li>
+        <% end %>
+      </ul>
+      <% end %>
+    <% end %>
+  </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,16 @@
+<%if user_signed_in? == false || current_user.is_auth  == false  %>
+  <%= render :partial => 'layouts/unauthorized' %>
+<% else %>
+  <div class="panel panel-default">
+    <div class="panel-body">
+    <h1>Jobs Posted</h1>
+    <hr>
+    <% @jobs.each do |j| %>
+      <h3 ><%= link_to j.title, j %></h3>
+      <h4 ><%= j.description %></h4>
+      <br>
+      <hr>
+    <% end %>
+    </div>
+  </div>
+<% end %>
